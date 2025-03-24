@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { LogOut } from "lucide-react"
 
@@ -13,6 +13,7 @@ interface User {
 
 export function Navbar() {
   const router = useRouter()
+  const pathname = usePathname()
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
@@ -28,6 +29,8 @@ export function Navbar() {
     router.push("/login")
   }
 
+  // Don't show navbar on login page
+  if (pathname === "/login") return null
   if (!user) return null
 
   return (
