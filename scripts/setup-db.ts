@@ -1,8 +1,8 @@
 import { config } from "dotenv"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { widgets, widgetStates } from "../lib/db/schema"
-import { getWidgetData } from "../lib/widget-data"
+import { widgets, users, userPreferences } from "../lib/db/schema"
+import bcrypt from "bcryptjs"
 
 // Load environment variables from .env file
 config()
@@ -17,6 +17,14 @@ const initialWidgets = [
   { id: "text-2", title: "Announcements", type: "text" },
   { id: "chart-1", title: "Monthly Performance", type: "chart" },
   { id: "activity-1", title: "Recent Activity", type: "activity" },
+]
+
+// Initial users data
+const initialUsers = [
+  { id: "user-1", name: "Demo User", email: "demo@example.com", password: "demo123" },
+  { id: "user-2", name: "John Doe", email: "john@example.com", password: "john123" },
+  { id: "user-3", name: "Jane Smith", email: "jane@example.com", password: "jane123" },
+  { id: "user-4", name: "Bob Wilson", email: "bob@example.com", password: "bob123" },
 ]
 
 async function main() {
@@ -54,13 +62,28 @@ async function main() {
       )
     `
 
-    // Create widget_states table
+    // Create users table
     await client`
-      CREATE TABLE IF NOT EXISTS widget_states (
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `
+
+    // Create user preferences table
+    await client`
+      CREATE TABLE IF NOT EXISTS user_preferences (
         id SERIAL PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         widget_id TEXT NOT NULL REFERENCES widgets(id) ON DELETE CASCADE,
         is_visible BOOLEAN NOT NULL DEFAULT true,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        position INTEGER NOT NULL DEFAULT 0,
+        settings JSONB NOT NULL DEFAULT '{}',
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, widget_id)
       )
     `
 
@@ -71,19 +94,41 @@ async function main() {
       console.log("Seeding widgets...")
       // Insert widgets
       await db.insert(widgets).values(initialWidgets)
+      console.log("Initial widget data seeded successfully!")
+    } else {
+      console.log("Widgets already exist, skipping widget seed")
+    }
 
-      // Set initial visibility states
-      console.log("Setting initial widget states...")
-      for (const widget of initialWidgets) {
-        await db.insert(widgetStates).values({
+    // Always update users
+    console.log("Updating users...")
+    // Hash passwords
+    const hashedUsers = await Promise.all(
+      initialUsers.map(async (user) => ({
+        ...user,
+        password: await bcrypt.hash(user.password, 10)
+      }))
+    )
+
+    // Delete existing users and preferences
+    await client`DELETE FROM user_preferences`
+    await client`DELETE FROM users`
+    await db.insert(users).values(hashedUsers)
+    console.log("Users updated successfully!")
+
+    // Create default preferences for each user
+    console.log("Setting up user preferences...")
+    for (const user of initialUsers) {
+      for (const [index, widget] of initialWidgets.entries()) {
+        await db.insert(userPreferences).values({
+          userId: user.id,
           widgetId: widget.id,
-          isVisible: true
+          isVisible: true,
+          position: index,
+          settings: {}
         })
       }
-      console.log("Initial data seeded successfully!")
-    } else {
-      console.log("Widgets already exist, skipping seed")
     }
+    console.log("User preferences created successfully!")
 
     console.log("Database setup complete!")
   } catch (error) {
