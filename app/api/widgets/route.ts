@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { db, isDatabaseAvailable } from "@/lib/db"
 import { widgets, widgetStates } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { getWidgetData } from "@/lib/widget-data"
 import { getDummyWidgets, updateDummyWidgetState } from "@/lib/dummy-data"
+import { db, isDatabaseAvailable } from "@/lib/db"
 
 export async function GET() {
   try {
