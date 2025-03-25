@@ -30,29 +30,40 @@ A modern, customizable dashboard application built with Next.js, featuring user 
 
 ```
 dashboard/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   ├── login/             # Login page
-│   └── page.tsx           # Dashboard page
-├── components/            # React components
-│   ├── ui/               # Reusable UI components
-│   ├── widgets/          # Widget components
-│   └── dashboard.tsx     # Main dashboard component
-├── lib/                   # Core utilities and types
-│   ├── api.ts           # API client functions
-│   ├── db/              # Database configuration
-│   ├── types.ts         # TypeScript type definitions
-│   └── utils.ts         # Utility functions
-├── scripts/              # Utility scripts
-│   └── setup-db.ts      # Database setup script
-└── public/              # Static assets
+├── app/                          # Next.js app directory
+│   ├── api/                      # API routes
+│   ├── login/                    # Login page
+│   └── page.tsx                  # Dashboard page
+├── components/                   # React components
+│   ├── ui/                       # Reusable UI components
+│   ├── widgets/                  # Widget components
+│   └── dashboard-skelton.tsx     # dashboard skelton
+│   └── dashboard.tsx             # Main dashboard component
+│   └── navbar.tsx                # Navbar component
+│   └── theme-forest.tsx          # theme provider for app
+│   └── widget-customizer.tsx     # theme provider for app
+│   └── widget-grid.tsx           # widget customizer component
+├── hooks/                        # Core utilities and types
+│   ├── use-mobile.tsx            # component for mobile responsiveness
+│   ├── use-toast.ts              # component for mobile responsiveness
+├── lib/                          # Core utilities and types
+│   ├── db/                       # Database configuration
+│   ├── api.ts                    # API client functions
+│   ├── dummy-data.ts             # Fallback data for db
+│   ├── seed.ts                   # Declare widgets information
+│   ├── types.ts                  # TypeScript type definitions
+│   └── utils.ts                  # Utility functions
+│   └── widget-data.ts                 # Widget data 
+├── scripts/                      # Utility scripts
+│   └── setup-db.ts               # Database setup script
+└── public/                       # Static assets
 ```
 
 ## Setup Instructions
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/sarathos584/dashboard-task.git
    cd dashboard
    ```
 
