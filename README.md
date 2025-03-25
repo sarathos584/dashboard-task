@@ -7,7 +7,6 @@ A modern, customizable dashboard application built with Next.js, featuring user 
 - 🔐 User Authentication
 - 📊 Customizable Widgets
 - 📈 Real-time Data Visualization
-- 🎨 Modern UI with Dark Mode Support
 - 🔄 Real-time Widget State Management
 - 📱 Responsive Design
 
@@ -59,7 +58,7 @@ dashboard/
 
 2. **Install dependencies**
    ```bash
-   npm install
+   npm install --legacy-peer-deps
    ```
 
 3. **Set up environment variables**
