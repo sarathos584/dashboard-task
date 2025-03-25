@@ -64,7 +64,7 @@ dashboard/
 1. **Clone the repository**
    ```bash
    git clone https://github.com/sarathos584/dashboard-task.git
-   cd dashboard
+   cd dashboard-task
    ```
 
 2. **Install dependencies**
