@@ -4,15 +4,22 @@ import * as schema from "./schema"
 
 export const isDatabaseAvailable = !!(process.env.DATABASE_URL)
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set")
+let client: ReturnType<typeof postgres> | null = null
+let db: ReturnType<typeof drizzle<typeof schema>> | null = null
+
+if (process.env.DATABASE_URL) {
+  try {
+    // Remove any accidental leading/trailing equals signs and whitespace
+    const dbUrl = process.env.DATABASE_URL.trim().replace(/^=+|=+$/g, '')
+    client = postgres(dbUrl, {
+      ssl: {
+        rejectUnauthorized: false
+      }
+    })
+    db = drizzle(client, { schema })
+  } catch (error) {
+    console.error('Failed to initialize database:', error)
+  }
 }
 
-const client = postgres(process.env.DATABASE_URL, {
-  ssl: {
-    rejectUnauthorized: false
-  }
-})
-
-export const db = drizzle(client, { schema })
-
+export { db }
