@@ -69,7 +69,7 @@ dashboard/
 
 2. **Install dependencies**
    ```bash
-   npm install --legacy-peer-deps
+   yarn install 
    ```
 
 3. **Set up environment variables**
